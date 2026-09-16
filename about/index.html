@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .article h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .article ul {
+            padding-left: 1.2rem;
+        }
+
+        .article li {
+            margin-bottom: 0.4rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .skill-card {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .skill-card h3 {
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .skill-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="../avatar.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x6][VOYAGER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="../index.html" class="nav-btn">~/home</a>
+            <a href="../ctf/index.html" class="nav-btn">~/ctf</a>
+            <a href="index.html" class="nav-btn active">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="../index.html">home</a> / <span style="color: var(--text-main);">about</span>
+        </div>
+
+        <article class="article">
+            <h1>whoami</h1>
+            <p>Hey! I'm <strong>Bisc</strong>, a cybersecurity student and enthusiast focused on penetration testing, web security, and Capture The Flag (CTF) challenges.</p>
+
+            <h2>01. Objectives & Focus</h2>
+            <p>This blog serves as my personal knowledge hub and public lab notebook. I write detailed walkthroughs for CTF rooms on platforms like <strong>TryHackMe</strong> and <strong>Hack The Box</strong> to document my methodology, tools, and technical growth.</p>
+
+            <h2>02. Technical Toolkit</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>Recon & Enumeration</h3>
+                    <p>Nmap, Burp Suite, Gobuster, Searchsploit</p>
+                </div>
+                <div class="skill-card">
+                    <h3>Operating Systems</h3>
+                    <p>Kali Linux, Debian/Ubuntu, Bash Environment</p>
+                </div>
+                <div class="skill-card">
+                    <h3>Exploitation</h3>
+                    <p>Web Security, PHP Backdoors, Metasploit, Python Scripting</p>
+                </div>
+            </div>
+
+            <h2>03. Connect</h2>
+            <p>You can follow my practical CTF progress directly through my public profile:</p>
+            <ul>
+                <li><strong>TryHackMe:</strong> <a href="https://tryhackme.com/p/Bisc" target="_blank" style="color: var(--accent-cyan);">@Bisc</a></li>
+                <li><strong>GitHub:</strong> <a href="https://github.com/0xBisc" target="_blank" style="color: var(--accent-cyan);">github.com/bisc</a></li>
+            </ul>
+        </article>
+    </main>
+
+</body>
+</html>
