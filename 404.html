@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[404] Target Not Found | Bisc's Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --accent-red: #ff3366;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links { width: 100%; margin-top: 1rem; }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .terminal-window {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--code-bg);
+            border: 1px solid var(--accent-red);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(255, 51, 102, 0.15);
+            position: relative;
+        }
+
+        .terminal-window::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .terminal-header {
+            background-color: var(--card-bg);
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dots { display: flex; gap: 6px; }
+
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+
+        .terminal-title {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .terminal-body {
+            padding: 1.8rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .ascii-banner {
+            color: var(--accent-red);
+            font-size: 0.65rem;
+            line-height: 1.1;
+            white-space: pre;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 8px rgba(255, 51, 102, 0.4);
+            max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .ascii-banner {
+                font-size: 0.32rem;
+                overflow-x: auto;
+                scrollbar-width: thin;
+            }
+        }
+
+        @media (max-width: 1055px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1.5rem;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .terminal-window {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .ascii-banner {
+                font-size: 0.35rem;
+                overflow-x: auto;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+
+        .ascii-banner::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .ascii-banner::-webkit-scrollbar-thumb {
+            background: var(--accent-red);
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .glitch-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--accent-red);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--accent-cyan);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip: rect(10px, 9999px, 30px, 0); }
+            20% { clip: rect(40px, 9999px, 20px, 0); }
+            40% { clip: rect(70px, 9999px, 80px, 0); }
+            60% { clip: rect(20px, 9999px, 60px, 0); }
+            80% { clip: rect(80px, 9999px, 10px, 0); }
+            100% { clip: rect(30px, 9999px, 50px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(60px, 9999px, 10px, 0); }
+            20% { clip: rect(10px, 9999px, 70px, 0); }
+            40% { clip: rect(50px, 9999px, 30px, 0); }
+            60% { clip: rect(30px, 9999px, 90px, 0); }
+            80% { clip: rect(90px, 9999px, 40px, 0); }
+            100% { clip: rect(20px, 9999px, 80px, 0); }
+        }
+
+        .log-box {
+            background: rgba(255, 51, 102, 0.05);
+            border-left: 3px solid var(--accent-red);
+            padding: 0.8rem 1rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .log-box span.err { color: var(--accent-red); }
+        .log-box span.info { color: var(--accent-cyan); }
+
+        .terminal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .cmd-btn {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .cmd-btn:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 12px rgba(0, 255, 136, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .cmd-btn.sec {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .cmd-btn.sec:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--accent-green);
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+            .ascii-banner { font-size: 0.45rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="avatar.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x6][VOYAGER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn">~/home</a>
+            <a href="ctf/index.html" class="nav-btn">~/ctf</a>
+            <a href="about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <div class="dots">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
+                </div>
+                <span class="terminal-title">ALERT: SYSTEM_RESOURCE_NOT_FOUND (404)</span>
+            </div>
+
+            <div class="terminal-body">
+                <div class="ascii-banner">
+  ██╗  ██╗ ██████╗ ██╗  ██╗    ████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗
+  ██║  ██║██╔═████╗██║  ██║    ╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║
+  ███████║██║██╔██║███████║       ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║   
+  ╚════██║████╔╝██║╚════██║       ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║   
+       ██║╚██████╔╝     ██║       ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗   
+       ╚═╝ ╚═════╝      ╚═╝       ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ 
+                </div>
+
+                <div class="glitch-text" data-text="[404] RESOURCE UNREACHABLE">[404] RESOURCE UNREACHABLE</div>
+
+                <div class="log-box">
+                    <p><span class="err">[!] ERROR:</span> Target endpoint path requested does not resolve in system route table.</p>
+                    <p><span class="info">[*] TRACE:</span> GET request failed -> 404 HTTP_NOT_FOUND</p>
+                    <p><span class="info">[*] STATUS:</span> Connection alive. Awaiting operator input...</p>
+                </div>
+
+                <p style="color: var(--accent-green); margin-bottom: 0.5rem;">Select execution path:</p>
+                
+                <div class="terminal-actions">
+                    <a href="index.html" class="cmd-btn">
+                        <span>$</span> cd /home
+                    </a>
+                    <a href="ctf/index.html" class="cmd-btn sec">
+                        <span>$</span> cd /ctf/
+                    </a>
+                    <button class="cmd-btn sec" onclick="runPingDiagnostics()">
+                        <span>$</span> ping -c 3 base
+                    </button>
+                </div>
+
+                <div id="diag-output" style="margin-top: 1.2rem; display: none; color: var(--text-muted);">
+                    <p><span style="color: var(--accent-cyan);">bisc@lab</span>:~$ ping -c 3 bisc.github.io</p>
+                    <p>64 bytes from 185.199.108.153: icmp_seq=1 ttl=56 time=14.2 ms</p>
+                    <p>64 bytes from 185.199.108.153: icmp_seq=2 ttl=56 time=13.8 ms</p>
+                    <p style="color: var(--accent-green);">--- 0% packet loss. Server active. Return to /home now. ---</p>
+                </div>
+
+                <p style="margin-top: 1.5rem;"><span style="color: var(--accent-green);">bisc@lab</span>:<span style="color: var(--accent-cyan);">~</span>$ <span class="cursor"></span></p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function runPingDiagnostics() {
+            const output = document.getElementById('diag-output');
+            output.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
