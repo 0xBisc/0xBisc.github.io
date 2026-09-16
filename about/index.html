@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me | Bisc's Security Lab</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #080c10;
             --card-bg: #0d121d;
             --accent-green: #00ff88;
             --accent-cyan: #00e5ff;
+            --accent-red: #ff3366;
             --text-main: #c9d1d9;
             --text-muted: #8b949e;
             --border-color: #1f293d;
@@ -32,6 +33,19 @@
             min-height: 100vh;
         }
 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+        }
+
+        /* Sidebar Styling */
         .sidebar {
             width: 300px;
             background-color: var(--card-bg);
@@ -42,6 +56,7 @@
             align-items: center;
             position: fixed;
             height: 100vh;
+            z-index: 10;
         }
 
         .avatar-container {
@@ -57,7 +72,7 @@
             border-radius: 15px;
             object-fit: cover;
             border: 2px solid var(--accent-green);
-            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.25);
         }
 
         .profile-name {
@@ -135,14 +150,15 @@
         .btn-external:hover {
             background: var(--accent-cyan);
             color: #000;
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
 
+        /* Main Content Layout */
         .main-content {
             margin-left: 300px;
             flex: 1;
             padding: 3rem;
-            max-width: 900px;
+            max-width: 950px;
         }
 
         .breadcrumbs {
@@ -161,87 +177,182 @@
             text-decoration: underline;
         }
 
+        /* Hero Article Card */
         .article {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
         }
 
-        .article h1 {
+        .header-title {
             color: #fff;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .article h2 {
-            color: var(--accent-green);
+            font-size: 2.2rem;
             font-family: 'Fira Code', monospace;
-            font-size: 1.1rem;
-            margin: 1.8rem 0 0.8rem 0;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .article p, .article ul {
-            margin-bottom: 1rem;
+        .header-title span {
+            color: var(--accent-green);
+        }
+
+        .intro-text {
+            font-size: 1.05rem;
             color: var(--text-main);
-            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            line-height: 1.7;
         }
 
-        .article ul {
-            padding-left: 1.2rem;
-        }
-
-        .article li {
-            margin-bottom: 0.4rem;
-        }
-
-        .skills-grid {
+        /* Modern Dashboard Stats Grid */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin: 1rem 0;
+            margin-bottom: 2rem;
         }
 
-        .skill-card {
+        .stat-card {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1rem;
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            transition: 0.3s ease;
         }
 
-        .skill-card h3 {
-            color: var(--accent-cyan);
+        .stat-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+        }
+
+        .stat-label {
             font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .skill-card p {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            margin-bottom: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        code {
+        .stat-value {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        /* Section Headings */
+        .article h2 {
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+            margin: 2.2rem 0 1.2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .article h2::before {
+            content: '>';
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* Feature Cards Grid */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.08);
+        }
+
+        .feature-card h3 {
             font-family: 'Fira Code', monospace;
             color: var(--accent-cyan);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.85rem;
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
         }
 
-        @media (max-width: 768px) {
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* Cyberpunk Social Links */
+        .connect-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .connect-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        .connect-item:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.03);
+            transform: translateX(5px);
+        }
+
+        .connect-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .connect-arrow {
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Breakpoints */
+        @media (max-width: 1055px) {
             body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-            .main-content { margin-left: 0; padding: 1.5rem; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Left Sidebar -->
     <aside class="sidebar">
         <div class="avatar-container">
             <img src="../avatar.jpeg" alt="Bisc Profile Picture" class="avatar">
@@ -261,40 +372,78 @@
         </div>
     </aside>
 
+    <!-- Main Content Area -->
     <main class="main-content">
         <div class="breadcrumbs">
             <a href="../index.html">home</a> / <span style="color: var(--text-main);">about</span>
         </div>
 
         <article class="article">
-            <h1>whoami</h1>
-            <p>Hey! I'm <strong>Bisc</strong>, a cybersecurity learner focused on penetration testing, web security, and Capture The Flag (CTF) challenges.</p>
+            <h1 class="header-title"><span>$</span> whoami</h1>
+            <p class="intro-text">
+                Hey! I'm <strong>Bisc</strong>, a cybersecurity and offensive security learner based in <strong>Jordan 🇯🇴</strong>. I specialize in web application security, system penetration testing, and Capture The Flag (CTF) challenges.
+            </p>
 
-            <h2>01. Objectives & Focus</h2>
-            <p>This blog serves as my personal knowledge hub and public lab notebook. I write detailed walkthroughs for CTF rooms on platforms like <strong>TryHackMe</strong> and <strong>Hack The Box</strong> to document my methodology, tools, and technical growth.</p>
-
-            <h2>02. Technical Toolkit</h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <h3>Recon & Enumeration</h3>
-                    <p>Nmap, Burp Suite, Gobuster, Searchsploit</p>
+            <!-- Dashboard Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">LOCATION</span>
+                    <span class="stat-value">Jordan 🇯🇴</span>
                 </div>
-                <div class="skill-card">
-                    <h3>Operating Systems</h3>
-                    <p>Kali Linux, Debian/Ubuntu</p>
+                <div class="stat-card">
+                    <span class="stat-label">SPECIALIZATION</span>
+                    <span class="stat-value">Web & CTFs</span>
                 </div>
-                <div class="skill-card">
-                    <h3>Exploitation</h3>
-                    <p>Web Security, PHP Backdoors, Metasploit, Python Scripting</p>
+                <div class="stat-card">
+                    <span class="stat-label">CURRENT STATUS</span>
+                    <span class="stat-value">Active Learner</span>
                 </div>
             </div>
 
-            <h2>03. Connect</h2>
-            <p>You can follow my practical CTF progress directly through my public profile:</p>
-            <ul>
-                <li><strong>TryHackMe:</strong> <a href="https://tryhackme.com/p/Bisc" target="_blank" style="color: var(--accent-cyan);">@Bisc</a></li>
-                <li><strong>GitHub:</strong> <a href="https://github.com/0xBisc" target="_blank" style="color: var(--accent-cyan);">github.com/bisc</a></li>
-            </ul>
+            <h2>Objectives & Core Focus</h2>
+            <div class="grid-cards">
+                <div class="feature-card">
+                    <h3>⚡ CTF Walkthroughs</h3>
+                    <p>Documenting precise, step-by-step solutions for TryHackMe and Hack The Box rooms with clean exploit breakdowns and methodologies.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔍 Web Exploitation</h3>
+                    <p>Analyzing real-world web vulnerability vectors including SQL Injection, RCE, Remote File Inclusions, and authentication bypasses.</p>
+                </div>
+            </div>
+
+            <h2>Operational Hub</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                This site serves as my personal knowledge hub, research laboratory, and public logbook for security discoveries.
+            </p>
+
+            <h2>Direct Connections</h2>
+            <div class="connect-list">
+                <a href="https://tryhackme.com/p/Bisc" target="_blank" class="connect-item">
+                    <div class="connect-info">
+                        <span style="color: var(--accent-green);">🟢</span>
+                        <span>TryHackMe Profile</span>
+                    </div>
+                    <span class="connect-arrow">tryhackme.com/p/Bisc ↗</span>
+                </a>
+
+                <a href="https://github.com/0xBisc" target="_blank" class="connect-item">
+                    <div class="connect-info">
+                        <span style="color: var(--accent-cyan);">⚡</span>
+                        <span>GitHub Repositories</span>
+                    </div>
+                    <span class="connect-arrow">github.com/0xBisc ↗</span>
+                </a>
+
+                <a href="https://0xBisc.github.io" class="connect-item">
+                    <div class="connect-info">
+                        <span style="color: var(--accent-red);">🌐</span>
+                        <span>Personal Web</span>
+                    </div>
+                    <span class="connect-arrow">0xBisc.github.io ↗</span>
+                </a>
+            </div>
+
         </article>
     </main>
 
