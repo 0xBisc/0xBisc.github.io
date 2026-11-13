@@ -232,6 +232,12 @@
             padding-bottom: 0.4rem;
         }
 
+        .writeups-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
         .featured-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -318,13 +324,24 @@
         </section>
 
         <h3 class="section-title">// Latest Writeup</h3>
-        <a href="ctf/tryhackme/Agent-T/index.html" class="featured-card">
-            <div class="featured-info">
-                <h4>TryHackMe — Agent T</h4>
-                <p>Exploiting PHP 8.1.0-dev Remote Code Execution (RCE) backdoor.</p>
-            </div>
-            <span class="badge-tag">TryHackMe</span>
-        </a>
+
+        <div class="writeups-list">
+            <a href="ctf/tryhackme/Pickle-Rick/index.html" class="featured-card">
+                <div class="featured-info">
+                    <h4>TryHackMe — Pickle Rick</h4>
+                    <p>Exploiting a web command panel, bypassing blacklisted commands, and abusing passwordless sudo privileges.</p>
+                </div>
+                <span class="badge-tag">TryHackMe</span>
+            </a>
+
+            <a href="ctf/tryhackme/Agent-T/index.html" class="featured-card">
+                <div class="featured-info">
+                    <h4>TryHackMe — Agent T</h4>
+                    <p>Exploiting PHP 8.1.0-dev Remote Code Execution (RCE) backdoor.</p>
+                </div>
+                <span class="badge-tag">TryHackMe</span>
+            </a>
+        </div>
     </main>
 
 </body>
