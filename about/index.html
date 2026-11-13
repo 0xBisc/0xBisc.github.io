@@ -33,19 +33,28 @@
             min-height: 100vh;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
         }
         ::-webkit-scrollbar-thumb {
             background: var(--accent-green);
             border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
         }
 
-        /* Sidebar Styling */
         .sidebar {
             width: 300px;
             background-color: var(--card-bg);
@@ -153,7 +162,6 @@
             box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
         }
 
-        /* Main Content Layout */
         .main-content {
             margin-left: 300px;
             flex: 1;
@@ -177,7 +185,6 @@
             text-decoration: underline;
         }
 
-        /* Hero Article Card */
         .article {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -208,7 +215,6 @@
             line-height: 1.7;
         }
 
-        /* Modern Dashboard Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -247,7 +253,6 @@
             color: var(--accent-green);
         }
 
-        /* Section Headings */
         .article h2 {
             color: #fff;
             font-family: 'Fira Code', monospace;
@@ -264,7 +269,6 @@
             font-weight: bold;
         }
 
-        /* Feature Cards Grid */
         .grid-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -301,7 +305,6 @@
             margin: 0;
         }
 
-        /* Cyberpunk Social Links */
         .connect-list {
             display: flex;
             flex-direction: column;
@@ -342,7 +345,6 @@
             font-size: 0.9rem;
         }
 
-        /* Breakpoints */
         @media (max-width: 1055px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
@@ -352,7 +354,6 @@
 </head>
 <body>
 
-    <!-- Left Sidebar -->
     <aside class="sidebar">
         <div class="avatar-container">
             <img src="../avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
@@ -372,7 +373,6 @@
         </div>
     </aside>
 
-    <!-- Main Content Area -->
     <main class="main-content">
         <div class="breadcrumbs">
             <a href="../index.html">home</a> / <span style="color: var(--text-main);">about</span>
@@ -384,7 +384,6 @@
                 Hey! I'm <strong>Bisc</strong>, a cybersecurity and offensive security learner based in <strong>Jordan 🇯🇴</strong>. I specialize in web application security, system penetration testing, and Capture The Flag (CTF) challenges.
             </p>
 
-            <!-- Dashboard Quick Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <span class="stat-label">LOCATION</span>
