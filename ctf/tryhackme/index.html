@@ -32,6 +32,28 @@
             min-height: 100vh;
         }
 
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
         .sidebar {
             width: 300px;
             background-color: var(--card-bg);
