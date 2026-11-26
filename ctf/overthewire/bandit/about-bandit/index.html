@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Bandit | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            min-width: 0;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .writeup-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-width: 0;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .writeup-card h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .writeup-meta {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .writeup-card h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.15rem;
+            margin-top: 1.6rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .writeup-card p {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .writeup-card ul {
+            margin-left: 1.4rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .writeup-card li {
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            background: var(--code-bg);
+            color: var(--accent-cyan);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .note-box {
+            background: var(--code-bg);
+            border-left: 3px solid var(--accent-green);
+            border-top: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.2rem;
+            border-radius: 6px;
+            margin-top: 1.2rem;
+        }
+
+        .note-box strong {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+        }
+
+        .next-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .nav-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-pill:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        @media (max-width: 600px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
+            .writeup-card { padding: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="/avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x8][HACKER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="/index.html" class="nav-btn">~/home</a>
+            <a href="/ctf/index.html" class="nav-btn active">~/ctf</a>
+            <a href="/about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="/index.html">home</a> / <a href="/ctf/index.html">ctf</a> / <a href="/ctf/overthewire/index.html">overthewire</a> / <a href="../index.html">bandit</a> / <span style="color: var(--text-main);">about-bandit</span>
+        </div>
+
+        <article class="writeup-card">
+            <h1>// About OverTheWire — Bandit</h1>
+            <div class="writeup-meta">Platform: OverTheWire · Track: Bandit · Difficulty: Beginner</div>
+
+            <p>
+                Bandit is the starting wargame on OverTheWire, built specifically for anyone getting comfortable with the Linux terminal and SSH. Rather than jumping straight into complex exploitation, each stage focuses on practical command-line skills—navigating filesystems, inspecting permissions, filtering text, and working with processes and basic networking.
+            </p>
+
+            <h2>// How the Levels Work</h2>
+            <p>
+                The game is structured sequentially starting at <strong>Level 0</strong>. Solving a stage gives you the password needed to log into the next user account over SSH (for example, beating Level 0 unlocks the credentials for <code>bandit1</code>). Every level page explains how to reach that target from the previous stage.
+            </p>
+
+            <h2>// Approach When Stuck</h2>
+            <p>
+                Getting stuck is part of the process—the goal is to build the habit of reading documentation and testing commands rather than guessing:
+            </p>
+            <ul>
+                <li><strong>Read the manual:</strong> Run <code>man &lt;command&gt;</code> (such as <code>man ls</code> or even <code>man man</code>) to check flags and usage. Press <code>/</code> to search inside a man page, <code>n</code> / <code>N</code> to jump between matches, and <code>q</code> to quit.</li>
+                <li><strong>Check shell built-ins:</strong> Some commands like <code>cd</code> don't have a separate man page—use <code>help &lt;command&gt;</code> instead.</li>
+                <li><strong>Search &amp; research:</strong> Look up unfamiliar concepts, error messages, or file formats to understand how Linux handles them under the hood.</li>
+            </ul>
+
+            <p style="color: var(--accent-green); font-family: 'Fira Code', monospace; margin-top: 1rem; font-weight: 600;">
+                Don't give up on a level — read the man pages, test your commands, solve it and earn that biscuit! No persistence means no biscuit 🙃🍪
+            </p>
+
+            <div style="display: flex; justify-content: center; margin: 1.25rem 0;">
+                <img src="/my-stickers/sticker38.png" alt="sticker" style="width: 250px; height: auto;">
+            </div>
+
+            <div class="note-box">
+                <strong>[!] VM Networking Tip (SSH Broken Pipe)</strong>
+                <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--text-muted);">
+                    If you connect from a virtual machine using NAT mode and run into an SSH <code>broken pipe</code> error, add <code>IPQoS throughput</code> to <code>/etc/ssh/ssh_config</code>. If that doesn't clear it up, switch your VM network adapter from NAT to <strong>Bridged</strong> mode.
+                </p>
+            </div>
+
+            <h2>// Tip</h2>
+            <p>Create a file for notes and passwords on your local machine. Passwords for levels are not saved automatically, so if you do not save them yourself, you will need to start over from <code>bandit0</code>. Passwords also occasionally change, and detailed notes help you return where you left off, reference later problems, or help others after completing a challenge.</p>
+        </article>
+
+        <div class="next-nav">
+            <a href="../index.html" class="nav-pill">← Back to Bandit Levels</a>
+            <a href="../level-0/index.html" class="nav-pill">Start: Level 0 →</a>
+        </div>
+    </main>
+
+</body>
+</html>
