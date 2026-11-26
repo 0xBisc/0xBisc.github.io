@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bandit Level 2 - 3 | Bisc's Security Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #080c10;
+            --card-bg: #0d121d;
+            --accent-green: #00ff88;
+            --accent-cyan: #00e5ff;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border-color: #1f293d;
+            --code-bg: #05080c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-left: 1px solid var(--border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-green) var(--bg-color);
+        }
+
+        .sidebar {
+            width: 300px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: fixed;
+            height: 100vh;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 1rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .profile-name {
+            font-family: 'Fira Code', monospace;
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-rank {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-bio {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-links {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: auto;
+        }
+
+        .nav-btn {
+            display: block;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .social-links {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-external {
+            display: block;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            transition: 0.2s ease;
+        }
+
+        .btn-external:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            flex: 1;
+            min-width: 0;
+            padding: 3rem;
+            max-width: 900px;
+        }
+
+        .breadcrumbs {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            overflow-wrap: anywhere;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .article {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            min-width: 0;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+        }
+
+        .tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .article h1 {
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .article h2 {
+            color: var(--accent-green);
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1rem;
+            margin: 1.6rem 0 0.7rem 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
+        .article p, .article ul {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .article ul {
+            padding-left: 1.3rem;
+        }
+
+        .article li {
+            margin-bottom: 0.45rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #e6edf3;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .next-nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .nav-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.8rem 1.2rem;
+            text-decoration: none;
+            color: var(--accent-cyan);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s ease;
+        }
+
+        .nav-pill:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        @media (max-width: 600px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .main-content { margin-left: 0; padding: 1.5rem; width: 100%; max-width: 100%; }
+            .article { padding: 2rem; }
+            pre { padding: 0.75rem; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="avatar-container">
+            <img src="/avatar2.jpeg" alt="Bisc Profile Picture" class="avatar">
+        </div>
+        <h2 class="profile-name">Bisc</h2>
+        <p class="profile-rank">[0x8][HACKER]</p>
+        <p class="profile-bio">I love biscuits 🙃🍪</p>
+
+        <nav class="nav-links">
+            <a href="/index.html" class="nav-btn">~/home</a>
+            <a href="/ctf/index.html" class="nav-btn active">~/ctf</a>
+            <a href="/about/index.html" class="nav-btn">~/about</a>
+        </nav>
+
+        <div class="social-links">
+            <a href="https://tryhackme.com/p/Bisc" target="_blank" class="btn-external">TryHackMe Profile</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="breadcrumbs">
+            <a href="/index.html">home</a> / <a href="/ctf/index.html">ctf</a> / <a href="/ctf/overthewire/index.html">overthewire</a> / <a href="/ctf/overthewire/bandit/index.html">bandit</a> / <span style="color: var(--text-main);">level_2-3</span>
+        </div>
+
+        <article class="article">
+            <div class="article-meta">
+                <span class="tag">OverTheWire</span>
+                <span class="tag">Bandit</span>
+                <span class="tag">Level 2 - 3</span>
+                <span class="tag">CLI</span>
+            </div>
+
+            <h1>Bandit — Level 2 - 3</h1>
+
+            <h2>Level Goal</h2>
+            <p>The password for the next level is stored in a file called <code>--spaces in this filename--</code> located in the home directory.</p>
+
+            <h2>Connection Details</h2>
+            <ul>
+                <li><strong>SSH Command:</strong><br><pre><code>ssh bandit2@bandit.labs.overthewire.org -p 2220</code></pre></li>
+                <li><strong>Level Password:</strong> <code>PK8fYLZg2hnHSz83plBL1iEPKdD3QToB</code></li>
+            </ul>
+
+            <h2>Commands You May Need</h2>
+            <p><code>ls</code>, <code>cd</code>, <code>cat</code>, <code>file</code>, <code>du</code>, <code>find</code></p>
+
+            <h2>01. Checking the Home Directory</h2>
+            <p>After logging in via SSH, we are already in the home directory, so we don't need to move anywhere.</p>
+
+            <p>List the directory with <code>ls</code> to confirm the file is there:</p>
+
+<pre><code>bandit2@bandit:~$ ls
+--spaces in this filename--</code></pre>
+
+            <h2>02. Reading the Filename with Spaces &amp; Leading Dashes</h2>
+            <p>If we try running <code>cat --spaces in this filename--</code> directly, it returns an error because the arguments aren't handled as a single quoted filename starting with dashes:</p>
+
+<pre><code>bandit2@bandit:~$ cat --spaces in this filename--
+error: unexpected argument '--spaces' found
+
+  tip: to pass '--spaces' as a value, use '-- --spaces'
+
+Usage: cat [OPTION]... [FILE]...
+
+For more information, try '--help'.</code></pre>
+
+            <p>To read it properly, we need to build on what we learned in the previous level, while also keeping in mind that spaces in the filename need to be grouped—by wrapping the filename in double quotes (<code>"--spaces in this filename--"</code>).</p>
+
+            <p>Using the full path with the filename inside quotes:</p>
+
+<pre><code>bandit2@bandit:~$ cat /home/bandit2/"--spaces in this filename--"
+7ZZ2LFrykP2zEyvBl4m3clcL7tGYJPME</code></pre>
+
+            <p>Or using a relative path with <code>./</code>:</p>
+
+<pre><code>bandit2@bandit:~$ cat ./"--spaces in this filename--"
+7ZZ2LFrykP2zEyvBl4m3clcL7tGYJPME</code></pre>
+
+            <p>A third option is using <code>--</code> before the quoted filename, which tells <code>cat</code> to stop parsing command-line options so any following arguments are treated strictly as filenames rather than flags:</p>
+
+<pre><code>bandit2@bandit:~$ cat -- "--spaces in this filename--"
+7ZZ2LFrykP2zEyvBl4m3clcL7tGYJPME</code></pre>
+
+            <p>There are other ways to read it too—pick whichever method you prefer, and make sure you understand what the command does before running it.</p>
+
+            <p>We've got the password <code>7ZZ2LFrykP2zEyvBl4m3clcL7tGYJPME</code> for the next level (<code>3-4</code>).</p>
+
+            <p style="color: var(--accent-green); font-family: 'Fira Code', monospace; margin-top: 1.5rem; font-weight: 600;">
+                [+] Level completed! Time for a biscuit 😋🍪
+            </p>
+        </article>
+
+        <div class="next-nav">
+            <a href="/ctf/overthewire/bandit/level_1-2/index.html" class="nav-pill">← Back: Level 1 - 2</a>
+            <!--<a href="/ctf/overthewire/bandit/level_3-4/index.html" class="nav-pill">Next: Level 3 - 4 →</a>-->
+        </div>
+    </main>
+
+</body>
+</html>
