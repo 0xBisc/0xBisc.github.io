@@ -361,7 +361,27 @@
 -</code></pre>
 
             <h2>02. Reading the <code>-</code> File</h2>
-            <p>If you try running <code>cat -</code> directly, it can look like your device lagged or an error happened—but nothing is broken. A standalone <code>-</code> tells <code>cat</code> to read from standard input (your keyboard or piped input) instead of a file named <code>-</code>.</p>
+            <p>If you try reading the file directly by running <code>cat -</code>, nothing prints and it just sits there waiting:</p>
+
+<pre>
+<code>bandit1@bandit:~$ cat -
+<br></code></pre>
+
+            <p>0_0  What?! why is it just sitting there... did my terminal freeze?!</p>
+
+            <div style="display: flex; justify-content: center; margin: 1.25rem 0;">
+                <img src="/my-stickers/sticker52.png" alt="sticker" style="width: 250px; height: auto;">
+            </div>
+
+            <p>It can look like your device lagged or an error happened—but nothing is broken. A standalone <code>-</code> tells <code>cat</code> to read from standard input (your keyboard or piped input) instead of a file named <code>-</code>, which you can exit with <code>Ctrl + C</code> or <code>Ctrl + D</code>.</p>
+
+            <p>Sooooo if we can't read it like that, how can we read it?</p>
+
+            <div style="display: flex; justify-content: center; margin: 1.25rem 0;">
+                <img src="/my-stickers/sticker46.png" alt="sticker" style="width: 250px; height: auto;">
+            </div>
+
+            <br>
 
             <p>To read the file properly, pass a path to it—either the full path:</p>
 
