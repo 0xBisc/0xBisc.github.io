@@ -270,7 +270,8 @@
         }
 
         .grid-cards {
-            display: grid;
+            display: flex;
+            flex-direction: column;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.2rem;
             margin-bottom: 1.5rem;
@@ -343,6 +344,7 @@
             color: var(--accent-cyan);
             font-family: 'Fira Code', monospace;
             font-size: 0.9rem;
+            margin-left: 10px;
         }
 
         @media (max-width: 1055px) {
